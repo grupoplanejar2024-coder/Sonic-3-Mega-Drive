@@ -1,56 +1,67 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sonic 3 - KUBO TOUCH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projeto Web</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #090d16;
-      color: #ffffff;
+    body {
       font-family: system-ui, -apple-system, sans-serif;
-      overflow: hidden;
+      background-color: #111318;
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 16px;
     }
-    #game-container {
+    .container {
       width: 100%;
-      height: 100%;
+      max-width: 900px;
+      background: #1b1f27;
+      border: 1px solid #2d3340;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    p {
+      color: #9ca3af;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .screen {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #090a0d;
+      border: 1px dashed #3b4254;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    #game {
-      width: 100%;
-      height: 100%;
+      color: #6b7280;
     }
   </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="game"></div>
+  <div class="container">
+    <h1>Título da Página</h1>
+    <p>Substitui este bloco pelo teu conteúdo ou integração.</p>
+    <div id="app" class="screen">Área principal</div>
   </div>
 
   <script>
-    EJS_player = "#game";
-    EJS_core = "segaMD";
-    EJS_gameName = "Sonic 3 Complete";
-    EJS_color = "#1d4ed8";
-    EJS_startOnLoaded = true;
-    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-
-    // Caminho exato do arquivo na raiz do repositório
-    EJS_gameUrl = "./Sonic3C.gen";
-
-    EJS_VirtualGamepadSettings = {
-      enabled: true
-    };
+    // Adiciona aqui a lógica JavaScript necessária
   </script>
-  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body>
 </html>
