@@ -47,11 +47,11 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
-        /* ---------- CAPA 3D FLUTUANTE ---------- */
+        /* ---------- CAPA 3D (CAIXA GENESIS / MEGA DRIVE) ---------- */
         .scene-3d {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: 385px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -66,57 +66,113 @@
         }
         .scene-3d.grabbing { cursor: grabbing; }
 
-        .box-3d-wrap {
-            --shine: 50%;
+        .case-3d {
+            --w: 196px;
+            --h: 274px;
             position: relative;
-            width: 210px;
-            height: 306px;
+            width: var(--w);
+            height: var(--h);
             transform-style: preserve-3d;
             will-change: transform;
         }
 
-        /* Recorte ao redor da caixa 3D para remover o fundo branco externo */
-        .box-3d-cutout {
-            position: relative;
+        .case-face {
+            position: absolute;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .case-front, .case-back {
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            clip-path: polygon(
-                18.8% 0.6%,
-                21.2% 0.1%,
-                96.4% 5.4%,
-                96.4% 94.6%,
-                21.2% 99.8%,
-                3.4% 93.8%,
-                3.4% 3.2%
-            );
+            border-radius: 5px;
             overflow: hidden;
         }
 
-        .box-3d-img {
+        .case-front {
+            --shine: 50%;
+            background: #141416;
+            box-shadow:
+                inset 0 1px 2px rgba(255,255,255,0.22),
+                inset 0 -2px 5px rgba(0,0,0,0.65);
+        }
+
+        .case-front img {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             -webkit-user-drag: none;
         }
 
-        .box-3d-glare {
+        .case-front::after {
+            content: '';
             position: absolute;
             inset: 0;
-            pointer-events: none;
             background: linear-gradient(
-                115deg,
-                transparent calc(var(--shine) - 18%),
-                rgba(255, 255, 255, 0.24) var(--shine),
-                transparent calc(var(--shine) + 18%)
+                112deg,
+                transparent calc(var(--shine) - 20%),
+                rgba(255, 255, 255, 0.28) var(--shine),
+                transparent calc(var(--shine) + 20%)
             );
-            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .case-back {
+            background: linear-gradient(165deg, #2b1418 0%, #151519 55%, #0d0d10 100%);
+            border: 1px solid rgba(255,255,255,0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .case-back-stripe {
+            width: 100%;
+            background: #c81e2b;
+            color: #fff;
+            font-weight: 900;
+            font-size: 11px;
+            letter-spacing: 2px;
+            padding: 6px 8px;
+            border-radius: 3px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .case-back-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffd43b;
+            margin-bottom: 8px;
+        }
+
+        .case-back-copy {
+            font-size: 10px;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        .case-side {
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #7c1018 0%, #c81e2b 45%, #8f141e 100%);
+        }
+
+        .case-top, .case-bottom {
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, #25252b, #121215);
         }
 
         .floor-shadow {
             width: 155px;
             height: 18px;
-            margin-top: 14px;
+            margin-top: 18px;
             border-radius: 50%;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, transparent 72%);
             pointer-events: none;
@@ -198,8 +254,8 @@
         #error-box button { margin-top: 16px; padding: 10px 18px; background: #555; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
 
         @media (max-width: 400px) {
-            .scene-3d { height: 340px; }
-            .box-3d-wrap { width: 180px; height: 262px; }
+            .scene-3d { height: 345px; }
+            .case-3d { --w: 168px; --h: 235px; }
         }
     </style>
 </head>
@@ -211,19 +267,29 @@
 
     <div id="game-card">
         <div class="scene-3d" id="scene-3d">
-            <div class="box-3d-wrap" id="box-3d">
-                <div class="box-3d-cutout">
+            <div class="case-3d" id="case-3d">
+                <div class="case-face case-front" id="c-front">
                     <img
                         id="cover-img"
-                        src="sonic3_2.jpeg"
-                        alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
-                        class="box-3d-img"
+                        src="Sonic-the-Hedgehog-3_4.jpg"
+                        alt="Capa Sonic the Hedgehog 3 - Sega Genesis"
                     >
-                    <div class="box-3d-glare"></div>
                 </div>
+                <div class="case-face case-back" id="c-back">
+                    <div class="case-back-stripe">SEGA GENESIS / MEGA DRIVE</div>
+                    <div class="case-back-title">SONIC THE HEDGEHOG 3</div>
+                    <div class="case-back-copy">
+                        Ilha dos Anjos • Death Egg • Sonic &amp; Tails<br>
+                        KUBO TOUCH EDITION
+                    </div>
+                </div>
+                <div class="case-face case-side" id="c-left"></div>
+                <div class="case-face case-side" id="c-right"></div>
+                <div class="case-face case-top" id="c-top"></div>
+                <div class="case-face case-bottom" id="c-bottom"></div>
             </div>
             <div class="floor-shadow" id="floor-shadow"></div>
-            <div class="hint">Arraste para inclinar a capa 3D</div>
+            <div class="hint">Arraste para girar a capa 3D</div>
         </div>
 
         <div class="content">
@@ -262,7 +328,7 @@
         /* ================== FALLBACK DA CAPA ================== */
         (function () {
             var img = document.getElementById('cover-img');
-            var fallbacks = ['sonic3.jpeg', 'sonic3.png', 'sonic3.webp', 'sonic3.jpg'];
+            var fallbacks = ['sonic3.jpeg', 'sonic3.jpg', 'sonic3.png', 'sonic3.webp'];
             var idx = 0;
             img.addEventListener('error', function () {
                 if (idx < fallbacks.length) {
@@ -273,10 +339,49 @@
 
         /* ================== CAPA 3D FLUTUANTE ================== */
         var scene3d = document.getElementById('scene-3d');
-        var box3d = document.getElementById('box-3d');
+        var case3d = document.getElementById('case-3d');
+        var cFront = document.getElementById('c-front');
+        var cBack = document.getElementById('c-back');
+        var cLeft = document.getElementById('c-left');
+        var cRight = document.getElementById('c-right');
+        var cTop = document.getElementById('c-top');
+        var cBottom = document.getElementById('c-bottom');
         var floorShadow = document.getElementById('floor-shadow');
 
-        var rx = -3, ry = 8;
+        function layoutCase3d() {
+            var W = case3d.offsetWidth;
+            var H = case3d.offsetHeight;
+            var D = Math.max(18, Math.round(W * 0.14));
+
+            cFront.style.transform = 'translateZ(' + (D / 2).toFixed(2) + 'px)';
+            cBack.style.transform = 'rotateY(180deg) translateZ(' + (D / 2).toFixed(2) + 'px)';
+
+            cLeft.style.width = D + 'px';
+            cLeft.style.left = '50%';
+            cLeft.style.marginLeft = (-D / 2) + 'px';
+            cLeft.style.transform = 'rotateY(-90deg) translateZ(' + (W / 2).toFixed(2) + 'px)';
+
+            cRight.style.width = D + 'px';
+            cRight.style.left = '50%';
+            cRight.style.marginLeft = (-D / 2) + 'px';
+            cRight.style.transform = 'rotateY(90deg) translateZ(' + (W / 2).toFixed(2) + 'px)';
+
+            cTop.style.height = D + 'px';
+            cTop.style.top = '50%';
+            cTop.style.marginTop = (-D / 2) + 'px';
+            cTop.style.transform = 'rotateX(90deg) translateZ(' + (H / 2).toFixed(2) + 'px)';
+
+            cBottom.style.height = D + 'px';
+            cBottom.style.top = '50%';
+            cBottom.style.marginTop = (-D / 2) + 'px';
+            cBottom.style.transform = 'rotateX(-90deg) translateZ(' + (H / 2).toFixed(2) + 'px)';
+        }
+
+        layoutCase3d();
+        window.addEventListener('resize', layoutCase3d);
+        window.addEventListener('orientationchange', layoutCase3d);
+
+        var rx = -4, ry = -16;
         var vy = 0;
         var dragging = false;
         var lastX = 0, lastY = 0;
@@ -284,37 +389,37 @@
         var rafId = null;
         var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+        function norm(a) { return ((a + 180) % 360 + 360) % 360 - 180; }
         function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-        function render3d(floatY) {
+        function renderCase3d(floatY) {
             var yOffset = floatY || 0;
-            rx = clamp(rx, -26, 26);
-            ry = clamp(ry, -34, 34);
-            box3d.style.transform =
+            case3d.style.transform =
                 'translateY(' + yOffset.toFixed(2) + 'px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
-            box3d.style.setProperty('--shine', (50 + ry * 1.2).toFixed(1) + '%');
+            cFront.style.setProperty('--shine', (50 + norm(ry) * 1.4).toFixed(1) + '%');
 
-            var shadowShift = (-ry * 0.55).toFixed(1);
-            var shadowScale = clamp(1 - yOffset * 0.015 - Math.abs(ry) * 0.003, 0.78, 1.08).toFixed(2);
+            var shadowShift = (-norm(ry) * 0.6).toFixed(1);
+            var shadowScale = clamp(1 - yOffset * 0.015 - Math.abs(norm(ry)) * 0.002, 0.76, 1.08).toFixed(2);
             floorShadow.style.transform = 'translateX(' + shadowShift + 'px) scale(' + shadowScale + ')';
         }
 
-        function tick3d(t) {
-            var floatY = reduceMotion ? 0 : Math.sin(t / 950) * 8;
+        function tickCase3d(t) {
+            var floatY = reduceMotion ? 0 : Math.sin(t / 950) * 7;
             if (!dragging) {
                 if (Math.abs(vy) > 0.05) {
                     ry += vy;
-                    vy *= 0.92;
+                    vy *= 0.93;
                     lastInteract = t;
-                } else if (t - lastInteract > 1500) {
-                    var targetY = reduceMotion ? 6 : Math.sin(t / 1800) * 14;
-                    var targetX = reduceMotion ? -2 : -2 + Math.cos(t / 2300) * 4;
-                    ry += (targetY - ry) * 0.04;
+                } else if (t - lastInteract > 1600) {
+                    var normY = norm(ry);
+                    var targetY = reduceMotion ? -14 : Math.sin(t / 1900) * 22;
+                    var targetX = reduceMotion ? -4 : -4 + Math.cos(t / 2400) * 4;
+                    ry = normY + (targetY - normY) * 0.04;
                     rx += (targetX - rx) * 0.04;
                 }
             }
-            render3d(floatY);
-            rafId = requestAnimationFrame(tick3d);
+            renderCase3d(floatY);
+            rafId = requestAnimationFrame(tickCase3d);
         }
 
         scene3d.addEventListener('pointerdown', function (e) {
@@ -332,24 +437,24 @@
             var dy = e.clientY - lastY;
             lastX = e.clientX;
             lastY = e.clientY;
-            ry += dx * 0.45;
-            vy = dx * 0.45;
-            rx -= dy * 0.35;
+            ry += dx * 0.55;
+            vy = dx * 0.55;
+            rx = clamp(rx - dy * 0.4, -45, 45);
             lastInteract = performance.now();
         });
 
-        function endDrag3d() {
+        function endDragCase3d() {
             dragging = false;
             scene3d.classList.remove('grabbing');
             lastInteract = performance.now();
         }
 
-        scene3d.addEventListener('pointerup', endDrag3d);
-        scene3d.addEventListener('pointercancel', endDrag3d);
-        scene3d.addEventListener('pointerleave', function () { if (dragging) endDrag3d(); });
+        scene3d.addEventListener('pointerup', endDragCase3d);
+        scene3d.addEventListener('pointercancel', endDragCase3d);
+        scene3d.addEventListener('pointerleave', function () { if (dragging) endDragCase3d(); });
 
-        render3d(0);
-        rafId = requestAnimationFrame(tick3d);
+        renderCase3d(0);
+        rafId = requestAnimationFrame(tickCase3d);
 
         /* ================== EMULADOR ================== */
         var ROM_CANDIDATES = [
