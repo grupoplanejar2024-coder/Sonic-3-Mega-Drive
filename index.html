@@ -117,7 +117,7 @@
             text-shadow: 0 1px 0 rgba(255,255,255,0.22), 0 -1px 0 rgba(0,0,0,0.7);
         }
 
-        /* Label com a capa do jogo (proporção da capa: 225x314) */
+        /* Label com a capa do jogo */
         .label {
             --shine: 50%;
             position: absolute;
@@ -125,13 +125,21 @@
             top: 8.6%;
             width: 48.7%;
             height: 75.4%;
-            background: #0a1a3a;
+            background: #c8102e;
             border: 3px solid #050506;
             border-radius: 2px;
             box-shadow: 0 0 0 2px #2c2c32, 0 4px 8px rgba(0,0,0,0.7), inset 0 0 10px rgba(0,0,0,0.5);
             overflow: hidden;
         }
-        .label img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+        .label img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 62% center;
+            transform: scale(1.12);
+            -webkit-user-drag: none;
+        }
         .label::after {
             content: '';
             position: absolute;
@@ -293,7 +301,10 @@
                     <div class="grip r"></div>
                     <div class="sega-mark">SEGA</div>
                     <div class="label" id="label">
-                        <img src="Sonic-the-Hedgehog-3.jpg" alt="Capa Sonic the Hedgehog 3 - Mega Drive">
+                        <img 
+                            src="sg-11134201-7qvfh-liaexykzje5od3.jpg" 
+                            onerror="this.onerror=null; this.src='Sonic-the-Hedgehog-3.jpg';"
+                            alt="Capa Sonic the Hedgehog 3 - Mega Drive">
                     </div>
                     <div class="lip"></div>
                 </div>
@@ -355,11 +366,10 @@
         var fTop    = document.getElementById('f-top');
         var fBottom = document.getElementById('f-bottom');
 
-        // Posiciona as 6 faces em pixels (mais seguro em navegadores de celular)
         function layout() {
             var W = cart.offsetWidth;
             var H = cart.offsetHeight;
-            var d = W * 0.13;                       // espessura
+            var d = W * 0.13;
             fFront.style.transform  = 'translateZ(' + (d / 2).toFixed(2) + 'px)';
             fBack.style.transform   = 'rotateY(180deg) translateZ(' + (d / 2).toFixed(2) + 'px)';
 
@@ -387,8 +397,8 @@
         window.addEventListener('resize', layout);
         window.addEventListener('orientationchange', layout);
 
-        var rx = -8, ry = -25;          // rotação atual
-        var vy = 0;                      // inércia do giro
+        var rx = -8, ry = -25;
+        var vy = 0;
         var dragging = false;
         var lastX = 0, lastY = 0;
         var lastInteract = 0;
@@ -453,7 +463,6 @@
         rafId = requestAnimationFrame(tick);
 
         /* ================== EMULADOR ================== */
-        // A ROM é procurada nesta ordem; usa a primeira que responder corretamente.
         var ROM_CANDIDATES = [
             'Sonic3C.gen',
             'Sonic-The-Hedgehog-3.md',
@@ -526,7 +535,6 @@
                 return;
             }
 
-            // Para a animação do cartucho para poupar processamento
             if (rafId) cancelAnimationFrame(rafId);
 
             document.getElementById('header-bar').style.display = 'none';
