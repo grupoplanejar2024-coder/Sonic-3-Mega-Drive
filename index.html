@@ -69,10 +69,27 @@
         .box-3d-wrap {
             --shine: 50%;
             position: relative;
-            width: 205px;
-            height: 298px;
+            width: 210px;
+            height: 306px;
             transform-style: preserve-3d;
             will-change: transform;
+        }
+
+        /* Recorte ao redor da caixa 3D para remover o fundo branco externo */
+        .box-3d-cutout {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(
+                18.8% 0.6%,
+                21.2% 0.1%,
+                96.4% 5.4%,
+                96.4% 94.6%,
+                21.2% 99.8%,
+                3.4% 93.8%,
+                3.4% 3.2%
+            );
+            overflow: hidden;
         }
 
         .box-3d-img {
@@ -81,7 +98,6 @@
             height: 100%;
             object-fit: contain;
             -webkit-user-drag: none;
-            filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.8));
         }
 
         .box-3d-glare {
@@ -91,10 +107,10 @@
             background: linear-gradient(
                 115deg,
                 transparent calc(var(--shine) - 18%),
-                rgba(255, 255, 255, 0.22) var(--shine),
+                rgba(255, 255, 255, 0.24) var(--shine),
                 transparent calc(var(--shine) + 18%)
             );
-            mix-blend-mode: soft-light;
+            mix-blend-mode: overlay;
         }
 
         .floor-shadow {
@@ -183,7 +199,7 @@
 
         @media (max-width: 400px) {
             .scene-3d { height: 340px; }
-            .box-3d-wrap { width: 175px; height: 255px; }
+            .box-3d-wrap { width: 180px; height: 262px; }
         }
     </style>
 </head>
@@ -196,13 +212,15 @@
     <div id="game-card">
         <div class="scene-3d" id="scene-3d">
             <div class="box-3d-wrap" id="box-3d">
-                <img
-                    id="cover-img"
-                    src="sonic3_2.jpeg"
-                    alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
-                    class="box-3d-img"
-                >
-                <div class="box-3d-glare"></div>
+                <div class="box-3d-cutout">
+                    <img
+                        id="cover-img"
+                        src="sonic3_2.jpeg"
+                        alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
+                        class="box-3d-img"
+                    >
+                    <div class="box-3d-glare"></div>
+                </div>
             </div>
             <div class="floor-shadow" id="floor-shadow"></div>
             <div class="hint">Arraste para inclinar a capa 3D</div>
