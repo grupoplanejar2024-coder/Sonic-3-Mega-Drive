@@ -455,6 +455,7 @@
         /* ================== EMULADOR ================== */
         // A ROM é procurada nesta ordem; usa a primeira que responder corretamente.
         var ROM_CANDIDATES = [
+            'Sonic3C.gen',
             'Sonic-The-Hedgehog-3.md',
             'Sonic-the-Hedgehog-3.md',
             'sonic-the-hedgehog-3.md',
@@ -496,7 +497,7 @@
                     var type = (r.headers.get('content-type') || '').toLowerCase();
                     var size = parseInt(r.headers.get('content-length') || '0', 10);
                     if (type.indexOf('text/html') !== -1) { log.push('Retornou uma página HTML (não é a ROM) → ' + url); continue; }
-                    if (size && size < 500000) { log.push('Arquivo muito pequeno (' + size + ' bytes; a ROM tem ~2 MB) → ' + url); continue; }
+                    if (size && size < 500000) { log.push('Arquivo muito pequeno (' + size + ' bytes; uma ROM de Mega Drive tem vários MB) → ' + url); continue; }
                     return { url: url, log: log };
                 } catch (e) {
                     log.push('Falha de rede/CORS → ' + url);
@@ -517,8 +518,8 @@
 
             if (!found.url) {
                 showError(
-                    'Não consegui baixar a ROM. Confira se o arquivo <b>Sonic-The-Hedgehog-3.md</b> (com T e H maiúsculos) ' +
-                    'está na mesma pasta do index.html, se tem cerca de <b>2 MB</b> no GitHub ' +
+                    'Não consegui baixar a ROM. Confira se o arquivo <b>Sonic3C.gen</b> (com S e C maiúsculos) ' +
+                    'está na mesma pasta do index.html, se tem alguns <b>MB</b> no GitHub ' +
                     'e se o repositório está <b>público</b>. Abra pelo link do GitHub Pages, não pelo arquivo local.',
                     found.log
                 );
