@@ -47,11 +47,11 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
-        /* ---------- CAPA 3D INTERATIVA ---------- */
+        /* ---------- CAPA 3D FLUTUANTE SEM FUNDO BRANCO ---------- */
         .scene-3d {
             position: relative;
             width: 100%;
-            height: 360px;
+            height: 365px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -61,7 +61,7 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: pan-y;
-            background: radial-gradient(ellipse at 50% 75%, #1d2a44 0%, #17191f 65%, #1e1e1e 100%);
+            background: radial-gradient(ellipse at 50% 68%, #1d2a44 0%, #17191f 65%, #1e1e1e 100%);
             padding: 16px;
         }
         .scene-3d.grabbing { cursor: grabbing; }
@@ -69,12 +69,27 @@
         .box-3d-wrap {
             --shine: 50%;
             position: relative;
-            width: 245px;
-            height: 245px;
+            width: 255px;
+            height: 255px;
             transform-style: preserve-3d;
             will-change: transform;
-            border-radius: 10px;
-            box-shadow: 0 18px 35px rgba(0, 0, 0, 0.75);
+        }
+
+        /* Contorno exato da caixa 3D para remover o fundo branco */
+        .box-3d-cutout {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(
+                23.2% 0.8%,
+                25.5% 0.2%,
+                95.2% 5.2%,
+                95.2% 94.8%,
+                25.5% 99.8%,
+                12.2% 96.4%,
+                12.2% 3.6%
+            );
+            overflow: hidden;
         }
 
         .box-3d-img {
@@ -82,32 +97,28 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 10px;
             -webkit-user-drag: none;
-            filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.65));
         }
 
         .box-3d-glare {
             position: absolute;
             inset: 0;
-            border-radius: 10px;
             pointer-events: none;
             background: linear-gradient(
                 115deg,
                 transparent calc(var(--shine) - 22%),
-                rgba(255, 255, 255, 0.24) var(--shine),
+                rgba(255, 255, 255, 0.28) var(--shine),
                 transparent calc(var(--shine) + 22%)
             );
             mix-blend-mode: screen;
         }
 
         .floor-shadow {
-            width: 180px;
+            width: 165px;
             height: 20px;
-            margin-top: 12px;
+            margin-top: 18px;
             border-radius: 50%;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.75) 0%, transparent 72%);
-            transition: transform 0.12s ease-out;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 72%);
             pointer-events: none;
         }
 
@@ -187,8 +198,8 @@
         #error-box button { margin-top: 16px; padding: 10px 18px; background: #555; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
 
         @media (max-width: 400px) {
-            .scene-3d { height: 320px; }
-            .box-3d-wrap { width: 215px; height: 215px; }
+            .scene-3d { height: 325px; }
+            .box-3d-wrap { width: 220px; height: 220px; }
         }
     </style>
 </head>
@@ -201,13 +212,15 @@
     <div id="game-card">
         <div class="scene-3d" id="scene-3d">
             <div class="box-3d-wrap" id="box-3d">
-                <img
-                    id="cover-img"
-                    src="sonic3.jpeg"
-                    alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
-                    class="box-3d-img"
-                >
-                <div class="box-3d-glare"></div>
+                <div class="box-3d-cutout">
+                    <img
+                        id="cover-img"
+                        src="sonic3.jpeg"
+                        alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
+                        class="box-3d-img"
+                    >
+                    <div class="box-3d-glare"></div>
+                </div>
             </div>
             <div class="floor-shadow" id="floor-shadow"></div>
             <div class="hint">Arraste para inclinar a capa 3D</div>
@@ -249,7 +262,7 @@
         /* ================== FALLBACK DA CAPA ================== */
         (function () {
             var img = document.getElementById('cover-img');
-            var fallbacks = ['sonic3.jpeg.jpg', 'sonic3.jpg', 'sonic3.png', 'sonic3.webp'];
+            var fallbacks = ['sonic3.png', 'sonic3.webp', 'sonic3.jpg', 'sonic3.jpeg.jpg'];
             var idx = 0;
             img.addEventListener('error', function () {
                 if (idx < fallbacks.length) {
@@ -258,12 +271,12 @@
             });
         })();
 
-        /* ================== CAPA 3D INTERATIVA ================== */
+        /* ================== CAPA 3D FLUTUANTE ================== */
         var scene3d = document.getElementById('scene-3d');
         var box3d = document.getElementById('box-3d');
         var floorShadow = document.getElementById('floor-shadow');
 
-        var rx = -4, ry = 8;
+        var rx = -3, ry = 8;
         var vy = 0;
         var dragging = false;
         var lastX = 0, lastY = 0;
@@ -273,30 +286,34 @@
 
         function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-        function render3d() {
-            rx = clamp(rx, -28, 28);
-            ry = clamp(ry, -36, 36);
-            box3d.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
-            box3d.style.setProperty('--shine', (50 + ry * 1.1).toFixed(1) + '%');
-            var shadowShift = (-ry * 0.6).toFixed(1);
-            var shadowScale = (1 - Math.abs(ry) * 0.004).toFixed(2);
+        function render3d(floatY) {
+            var yOffset = floatY || 0;
+            rx = clamp(rx, -26, 26);
+            ry = clamp(ry, -34, 34);
+            box3d.style.transform =
+                'translateY(' + yOffset.toFixed(2) + 'px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+            box3d.style.setProperty('--shine', (50 + ry * 1.2).toFixed(1) + '%');
+
+            var shadowShift = (-ry * 0.55).toFixed(1);
+            var shadowScale = clamp(1 - yOffset * 0.015 - Math.abs(ry) * 0.003, 0.78, 1.08).toFixed(2);
             floorShadow.style.transform = 'translateX(' + shadowShift + 'px) scale(' + shadowScale + ')';
         }
 
         function tick3d(t) {
+            var floatY = reduceMotion ? 0 : Math.sin(t / 950) * 8;
             if (!dragging) {
                 if (Math.abs(vy) > 0.05) {
                     ry += vy;
                     vy *= 0.92;
                     lastInteract = t;
-                } else if (t - lastInteract > 1800) {
-                    var targetY = reduceMotion ? 6 : Math.sin(t / 1900) * 14;
-                    var targetX = reduceMotion ? -3 : -3 + Math.cos(t / 2400) * 5;
+                } else if (t - lastInteract > 1500) {
+                    var targetY = reduceMotion ? 6 : Math.sin(t / 1800) * 14;
+                    var targetX = reduceMotion ? -2 : -2 + Math.cos(t / 2300) * 4;
                     ry += (targetY - ry) * 0.04;
                     rx += (targetX - rx) * 0.04;
                 }
             }
-            render3d();
+            render3d(floatY);
             rafId = requestAnimationFrame(tick3d);
         }
 
@@ -331,7 +348,7 @@
         scene3d.addEventListener('pointercancel', endDrag3d);
         scene3d.addEventListener('pointerleave', function () { if (dragging) endDrag3d(); });
 
-        render3d();
+        render3d(0);
         rafId = requestAnimationFrame(tick3d);
 
         /* ================== EMULADOR ================== */
