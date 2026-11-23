@@ -337,7 +337,7 @@
                 <div class="hang-tab"></div>
 
                 <div class="face face-front" id="front">
-                    <img src="Sonic-the-Hedgehog-3.jpg" alt="Capa Sonic the Hedgehog 3 - Sega Genesis">
+                    <img id="cover-img" src="sonic3.jpeg" alt="Capa Sonic the Hedgehog 3 - Sega Genesis">
                 </div>
 
                 <div class="face face-back">
@@ -397,6 +397,19 @@
     <div id="error-box"></div>
 
     <script>
+        /* Garante carregamento da capa caso a extensão varie no repositório */
+        (function () {
+            var coverImg = document.getElementById('cover-img');
+            var fallbacks = ['sonic3.jpeg', 'sonic3.jpg', 'Sonic-the-Hedgehog-3.jpg', 'Sonic-the-Hedgehog-3.jpeg'];
+            var idx = 0;
+            coverImg.addEventListener('error', function () {
+                idx++;
+                if (idx < fallbacks.length) {
+                    coverImg.src = fallbacks[idx];
+                }
+            });
+        })();
+
         /* ================== CAIXA 3D INTERATIVA ================== */
         var scene    = document.getElementById('scene');
         var gameCase = document.getElementById('game-case');
