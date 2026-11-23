@@ -1,67 +1,192 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projeto Web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sonic the Hedgehog 3 (USA) — KUBO TOUCH</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: #111827;
+      --accent: #00a8ff;
+      --accent-2: #ffdd00;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #111318;
-      color: #f3f4f6;
-      min-height: 100vh;
+      background: radial-gradient(circle at top, #132238 0%, var(--bg-dark) 65%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px;
-      gap: 16px;
+      padding: 16px;
     }
+
     .container {
       width: 100%;
-      max-width: 900px;
-      background: #1b1f27;
-      border: 1px solid #2d3340;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    h1 {
-      font-size: 1.4rem;
-      margin-bottom: 8px;
-    }
-    p {
-      color: #9ca3af;
-      font-size: 0.95rem;
-      margin-bottom: 20px;
-    }
-    .screen {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      background: #090a0d;
-      border: 1px dashed #3b4254;
-      border-radius: 8px;
+
+    header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #6b7280;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cover-thumb {
+      width: 48px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #000;
+    }
+
+    .title-group h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .title-group p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .badge {
+      background: rgba(0, 168, 255, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(0, 168, 255, 0.35);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .emulator-box {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+
+    .controls-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .controls-card h2 {
+      font-size: 0.9rem;
+      color: var(--accent-2);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .controls-grid span strong {
+      color: var(--text-main);
+    }
+
+    .tip {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Título da Página</h1>
-    <p>Substitui este bloco pelo teu conteúdo ou integração.</p>
-    <div id="app" class="screen">Área principal</div>
+    <header>
+      <div class="brand">
+        <img
+          src="Sonic-the-Hedgehog-3_3.jpg"
+          alt="Capa de Sonic the Hedgehog 3 (USA)"
+          class="cover-thumb"
+        />
+        <div class="title-group">
+          <h1>Sonic the Hedgehog 3 (USA)</h1>
+          <p>Sega Genesis / Mega Drive • KUBO TOUCH</p>
+        </div>
+      </div>
+      <span class="badge">NFC READY</span>
+    </header>
+
+    <main class="emulator-box">
+      <div id="game"></div>
+    </main>
+
+    <section class="controls-card">
+      <h2>Controles</h2>
+      <div class="controls-grid">
+        <span><strong>Direcional:</strong> Setas</span>
+        <span><strong>A / B / C:</strong> Z / X / C</span>
+        <span><strong>Start:</strong> Enter</span>
+        <span><strong>Select / Mode:</strong> Shift</span>
+      </div>
+      <p class="tip">
+        No celular, utilize o controle virtual na tela. Ajuste o caminho da ROM em <code>EJS_gameUrl</code> para o arquivo <code>.md</code> ou <code>.bin</code> hospedado no seu repositório.
+      </p>
+    </section>
   </div>
 
   <script>
-    // Adiciona aqui a lógica JavaScript necessária
+    window.EJS_player = "#game";
+    window.EJS_core = "segaMD";
+    window.EJS_gameName = "Sonic the Hedgehog 3 (USA)";
+    window.EJS_gameUrl = "./Sonic The Hedgehog 3 (USA).md";
+    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+    window.EJS_startOnLoaded = true;
+    window.EJS_language = "pt-BR";
+    window.EJS_backgroundImage = "./Sonic-the-Hedgehog-3_3.jpg";
+    window.EJS_backgroundBlur = true;
+    window.EJS_volume = 0.7;
   </script>
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body>
 </html>
