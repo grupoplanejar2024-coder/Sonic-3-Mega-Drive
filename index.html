@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -225,7 +225,6 @@
             transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
             background: linear-gradient(180deg, #1c1c1c, #111);
         }
-        /* Aba superior clássica de pendurar da caixa Sega */
         .hang-tab {
             position: absolute;
             top: -16px;
@@ -314,22 +313,6 @@
         #game-container.active { display: block; }
         #game { width: 100%; height: 100%; }
 
-        #btn-back {
-            display: none;
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            z-index: 100000;
-            padding: 8px 12px;
-            background: rgba(0,0,0,.6);
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        body.playing #btn-back { display: block; }
-
         #error-box { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100001; background: #121212; padding: 24px; overflow-y: auto; line-height: 1.6; font-size: 14px; }
         #error-box.active { display: block; }
         #error-box b.err { color: #e74c3c; }
@@ -349,17 +332,14 @@
     </header>
 
     <div id="game-card">
-        <!-- Caixa 3D Interativa com a Capa Oficial -->
         <div class="scene" id="scene">
             <div class="case" id="game-case">
                 <div class="hang-tab"></div>
 
-                <!-- Frente com a imagem da capa -->
                 <div class="face face-front" id="front">
                     <img src="Sonic-the-Hedgehog-3.jpg" alt="Capa Sonic the Hedgehog 3 - Sega Genesis">
                 </div>
 
-                <!-- Verso da caixa -->
                 <div class="face face-back">
                     <div class="back-header">GENESIS</div>
                     <div class="back-art">
@@ -372,23 +352,19 @@
                     </div>
                 </div>
 
-                <!-- Lombada lateral vermelha -->
                 <div class="face face-left">
                     <span class="spine-genesis">GENESIS</span>
                     <span class="spine-title">SONIC 3</span>
                     <span class="spine-sega">SEGA</span>
                 </div>
 
-                <!-- Lateral direita -->
                 <div class="face face-right"></div>
-
-                <!-- Topo e base -->
                 <div class="face face-top"></div>
                 <div class="face face-bottom"></div>
             </div>
             <div class="floor-shadow"></div>
         </div>
-        <div class="hint">Arraste para girar a caixa 3D</div>
+        <div class="hint">Arrasta para girar a caixa 3D</div>
 
         <div class="content">
             <h1>Sonic the Hedgehog 3</h1>
@@ -405,7 +381,7 @@
 
             <div class="details">
                 <ul>
-                    <li><strong>🕹️ Gênero:</strong> Plataforma / Ação</li>
+                    <li><strong>🕹️ Género:</strong> Plataforma / Ação</li>
                     <li><strong>💾 Plataforma:</strong> Mega Drive / Genesis</li>
                 </ul>
             </div>
@@ -413,8 +389,6 @@
             <button id="play-btn" class="btn-play">JOGAR AGORA</button>
         </div>
     </div>
-
-    <button id="btn-back">✕ Sair</button>
 
     <div id="game-container">
         <div id="game"></div>
@@ -428,8 +402,8 @@
         var gameCase = document.getElementById('game-case');
         var front    = document.getElementById('front');
 
-        var rx = -6, ry = 22;            // rotação inicial destacando a capa e a lombada
-        var vy = 0;                      // inércia do giro
+        var rx = -6, ry = 22;
+        var vy = 0;
         var dragging = false;
         var lastX = 0, lastY = 0;
         var lastInteract = 0;
@@ -550,16 +524,16 @@
             started = true;
             var btn = document.getElementById('play-btn');
             btn.disabled = true;
-            btn.textContent = 'CARREGANDO...';
+            btn.textContent = 'A CARREGAR...';
 
             var found = await findRom();
             btn.textContent = 'JOGAR AGORA';
 
             if (!found.url) {
                 showError(
-                    'Não consegui baixar a ROM. Confira se o arquivo <b>Sonic3C.gen</b> (com S e C maiúsculos) ' +
+                    'Não consegui transferir a ROM. Confirma se o ficheiro <b>Sonic3C.gen</b> (com S e C maiúsculos) ' +
                     'está na mesma pasta do index.html, se tem alguns <b>MB</b> no GitHub ' +
-                    'e se o repositório está <b>público</b>. Abra pelo link do GitHub Pages, não pelo arquivo local.',
+                    'e se o repositório está <b>público</b>. Abre pelo link do GitHub Pages, não pelo ficheiro local.',
                     found.log
                 );
                 return;
@@ -584,13 +558,12 @@
             var script = document.createElement('script');
             script.src = window.EJS_pathtodata + 'loader.js';
             script.onerror = function () {
-                showError('Não foi possível carregar o EmulatorJS (cdn.emulatorjs.org). Verifique sua internet ou se algum bloqueador está impedindo.');
+                showError('Não foi possível carregar o EmulatorJS (cdn.emulatorjs.org). Verifica a tua ligação à internet ou se algum bloqueador está a impedir.');
             };
             document.body.appendChild(script);
         }
 
         document.getElementById('play-btn').addEventListener('click', startEmulator);
-        document.getElementById('btn-back').addEventListener('click', function () { location.reload(); });
     </script>
 </body>
 </html>
