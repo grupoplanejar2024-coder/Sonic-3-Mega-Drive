@@ -37,18 +37,16 @@
   </div>
 
   <script>
-    // Configurações do EmulatorJS para Sega Mega Drive / Genesis
     EJS_player = "#game";
-    EJS_core = "segaMD"; // Alternativa: "genesis_plus_gx" se o teu build suportar
-    EJS_gameName = "Sonic 3";
+    EJS_core = "segaMD";
+    EJS_gameName = "Sonic 3 Complete";
     EJS_color = "#1d4ed8";
     EJS_startOnLoaded = true;
     EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
 
-    // Substitui pelo caminho real da tua ROM hospedada (ex.: ./roms/sonic3.md ou sonic-3-complete.bin)
-    EJS_gameUrl = "./roms/sonic3.md";
+    // Caminho exato do arquivo na raiz do repositório
+    EJS_gameUrl = "./Sonic3C.gen";
 
-    // Ativa controlos touch em dispositivos móveis
     EJS_VirtualGamepadSettings = {
       enabled: true
     };
