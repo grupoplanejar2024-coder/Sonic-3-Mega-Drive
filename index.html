@@ -1,110 +1,613 @@
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sonic 3 Complete — KUBO TOUCH</title>
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #0b0f19;
-      color: #ffffff;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      height: 48px;
-      padding: 0 14px;
-      background: #121829;
-      border-bottom: 1px solid #222c46;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .brand {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #38bdf8;
-    }
-    .game-title {
-      font-weight: 600;
-      color: #f8fafc;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-left: 10px;
-    }
-    #game-wrapper {
-      flex: 1;
-      width: 100%;
-      height: calc(100% - 48px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    #game {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <span class="brand">KUBO TOUCH</span>
-    <span class="game-title">Sonic 3 Complete (Mega Drive)</span>
-  </header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonic 3 Complete - Kubo Touch</title>
 
-  <div id="game-wrapper">
-    <div id="game"></div>
-  </div>
-
-  <script>
-    const ROM_URL = "./Sonic3C.gen";
-    const CDN_LIST = [
-      "https://cdn.emulatorjs.org/stable/data/",
-      "https://cdn.emulatorjs.org/latest/data/"
-    ];
-
-    function loadEmulator(cdnIndex = 0) {
-      const oldScript = document.getElementById("ejs-loader");
-      if (oldScript) oldScript.remove();
-
-      window.EJS_player = "#game";
-      window.EJS_core = "genesis_plus_gx";
-      window.EJS_gameName = "Sonic 3 Complete";
-      window.EJS_gameUrl = ROM_URL;
-      window.EJS_pathtodata = CDN_LIST[cdnIndex];
-      window.EJS_startOnLoaded = true;
-      window.EJS_language = "pt-PT";
-
-      window.EJS_virtualGamepadSettings = {
-        enabled: true
-      };
-
-      const script = document.createElement("script");
-      script.id = "ejs-loader";
-      script.src = CDN_LIST[cdnIndex] + "loader.js";
-      script.async = true;
-      script.onerror = () => {
-        if (cdnIndex + 1 < CDN_LIST.length) {
-          loadEmulator(cdnIndex + 1);
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
-      };
-      document.body.appendChild(script);
-    }
 
-    loadEmulator(0);
-  </script>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: #1e1e1e;
+            z-index: 5;
+        }
+
+        .badge {
+            background: #333333;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #555;
+        }
+
+        #game-card {
+            width: 100%;
+            max-width: 440px;
+            margin: 80px 20px 20px 20px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            perspective: 1000px;
+        }
+
+        /* Cartucho 3D */
+        .cartridge-wrapper {
+            width: 100%;
+            padding: 25px 10px 18px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            cursor: pointer;
+        }
+
+        /* Corpo do cartucho Sega Mega Drive */
+        .md-cart-body {
+            width: 244px;
+            height: 278px;
+            position: relative;
+            background: linear-gradient(180deg, #272a30 0%, #16181c 55%, #111316 100%);
+            border-radius: 16px 16px 6px 6px;
+            clip-path: polygon(
+                0 14px,
+                14px 0,
+                calc(100% - 14px) 0,
+                100% 14px,
+                100% 42px,
+                calc(100% - 8px) 46px,
+                calc(100% - 8px) 62px,
+                100% 66px,
+                100% calc(100% - 18px),
+                calc(100% - 12px) calc(100% - 18px),
+                calc(100% - 12px) 100%,
+                12px 100%,
+                12px calc(100% - 18px),
+                0 calc(100% - 18px)
+            );
+            box-shadow:
+                inset 0 2px 3px rgba(255,255,255,0.18),
+                inset 0 -4px 7px rgba(0,0,0,0.75),
+                inset 3px 0 4px rgba(255,255,255,0.08),
+                inset -3px 0 4px rgba(0,0,0,0.65);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 14px 12px 14px;
+            transform: translateZ(20px);
+            filter: drop-shadow(0 15px 22px rgba(0,0,0,0.75));
+        }
+
+        /* Entalhe superior esquerdo clássico do Mega Drive */
+        .md-top-notch {
+            position: absolute;
+            top: 0;
+            left: 26px;
+            width: 24px;
+            height: 11px;
+            background: #0d0f12;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            box-shadow: inset 0 -2px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Faixa superior com marca */
+        .md-top-header {
+            width: 100%;
+            height: 34px;
+            margin-top: 6px;
+            padding: 0 8px;
+            background: linear-gradient(180deg, #1d2026 0%, #262a32 100%);
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.65);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .md-sega-logo {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #d4d8df;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+        }
+
+        .md-console-label {
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #38bdf8;
+            text-transform: uppercase;
+        }
+
+        /* Rebaixo da etiqueta */
+        .md-label-recess {
+            width: 100%;
+            height: 186px;
+            margin-top: 10px;
+            padding: 3px;
+            background: #0f1114;
+            border-radius: 5px;
+            box-shadow:
+                inset 0 2px 5px rgba(0,0,0,0.85),
+                0 1px 1px rgba(255,255,255,0.1);
+            display: flex;
+        }
+
+        .md-label-sticker {
+            width: 100%;
+            height: 100%;
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            background: #0c1936;
+            border: 1px solid #090b0e;
+        }
+
+        /* Capa centralizada */
+        .md-sticker-art {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #0c1936;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .md-sticker-art img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: center;
+            transform: none;
+            image-rendering: auto;
+            filter: contrast(1.05) saturate(1.08);
+            backface-visibility: hidden;
+            display: block;
+        }
+
+        /* Reflexo na etiqueta */
+        .md-label-sticker::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 65%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.25),
+                transparent
+            );
+            transform: skewX(-25deg);
+            transition: left 0.6s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .md-cart-body:hover .md-label-sticker::after {
+            left: 160%;
+        }
+
+        /* Friso inferior estilo Mega Drive */
+        .md-bottom-ridge {
+            width: 82%;
+            height: 8px;
+            margin-top: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #111316 0px,
+                #111316 4px,
+                #262930 4px,
+                #262930 7px
+            );
+            border-radius: 2px;
+            opacity: 0.85;
+        }
+
+        /* Informações */
+        .content {
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 22px;
+            color: #e5e5e5;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .details {
+            font-size: 13px;
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+        .details ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        /* Botão jogar */
+        .btn-play {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #2b2b2b;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+            outline: none;
+            position: relative;
+            z-index: 10;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-play:hover {
+            background: #3b3b3b;
+            transform: translateY(-2px);
+        }
+
+        .btn-play:active {
+            background: #1f1f1f;
+            transform: translateY(0);
+        }
+
+        /* Emulador */
+        #game-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            z-index: 99999;
+            background: #000;
+            overflow: hidden;
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* Barra flutuante de controlo / troca de núcleo */
+        #emu-toolbar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .emu-bar-group {
+            display: flex;
+            gap: 6px;
+            pointer-events: auto;
+            flex-wrap: wrap;
+        }
+
+        .emu-btn {
+            background: rgba(25, 25, 25, 0.88);
+            color: #7dd3fc;
+            border: 1px solid rgba(56, 189, 248, 0.55);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .emu-btn:hover {
+            background: rgba(14, 42, 66, 0.95);
+        }
+
+        /* Tela ampliada no celular vertical */
+        @media screen and (max-width: 768px) {
+            #game-container {
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
+                background: #000;
+                overflow: hidden;
+            }
+
+            #game {
+                width: 100vw !important;
+                height: 100dvh !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            #game canvas {
+                width: 100vw !important;
+                height: auto !important;
+                max-width: 100vw !important;
+                max-height: 90dvh !important;
+                aspect-ratio: 4 / 3;
+                object-fit: contain;
+                display: block;
+            }
+        }
+
+        /* Celular horizontal */
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            #game-container {
+                width: 100vw;
+                height: 100dvh;
+            }
+
+            #game {
+                width: 100vw !important;
+                height: 100dvh !important;
+            }
+
+            #game canvas {
+                width: auto !important;
+                height: 100dvh !important;
+                max-width: 100vw !important;
+                max-height: 100dvh !important;
+                aspect-ratio: 4 / 3;
+                object-fit: contain;
+            }
+        }
+
+        /* Telas menores */
+        @media (max-width: 400px) {
+            .md-cart-body {
+                transform: scale(0.9) translateZ(20px);
+            }
+
+            #game-card {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header-bar">
+        <span class="badge">KUBO TOUCH</span>
+    </header>
+
+    <div id="game-card">
+
+        <!-- Cartucho Sega Mega Drive -->
+        <div class="cartridge-wrapper" id="cartridge3d">
+
+            <div class="md-cart-body">
+                <div class="md-top-notch"></div>
+
+                <!-- Logotipo -->
+                <div class="md-top-header">
+                    <span class="md-sega-logo">SEGA</span>
+                    <span class="md-console-label">MEGA DRIVE</span>
+                </div>
+
+                <!-- Etiqueta do cartucho -->
+                <div class="md-label-recess">
+                    <div class="md-label-sticker">
+                        <div class="md-sticker-art">
+                            <img
+                                id="cover-img"
+                                alt="Capa Sonic 3 Complete"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalhe inferior -->
+                <div class="md-bottom-ridge"></div>
+            </div>
+        </div>
+
+        <!-- Informações do jogo -->
+        <div class="content">
+
+            <h1>Sonic 3 Complete</h1>
+
+            <div class="meta-info">
+                <span>🎮 1-2 Jogadores</span>
+                <span>📅 1994</span>
+                <span>🕹️ Sega Mega Drive</span>
+            </div>
+
+            <p class="description">
+                Acompanha o Sonic, o Tails e o Knuckles na Angel Island nesta compilação unificada de Sonic 3 e Sonic &amp; Knuckles, com fases repletas de velocidade, zonas secretas e opções personalizáveis.
+            </p>
+
+            <div class="details">
+                <ul>
+                    <li><strong>🕹️ Género:</strong> Plataformas / Ação</li>
+                </ul>
+            </div>
+
+            <button id="play-btn" class="btn-play">
+                JOGAR AGORA
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Tela do jogo -->
+    <div id="game-container">
+        <div id="emu-toolbar">
+            <div class="emu-bar-group">
+                <button type="button" class="emu-btn" id="back-btn">← Voltar</button>
+            </div>
+            <div class="emu-bar-group">
+                <button type="button" class="emu-btn" data-core="genesis_plus_gx">Core: Genesis Plus GX</button>
+                <button type="button" class="emu-btn" data-core="segaMD">Core: Mega Drive</button>
+                <button type="button" class="emu-btn" data-core="picodrive">Core: PicoDrive</button>
+            </div>
+        </div>
+        <div id="game"></div>
+    </div>
+
+    <script>
+        /* Capa do jogo (altera para o nome exato da imagem no teu repositório) */
+        const COVER_FILE = 'Sonic 3 Complete.jpeg';
+        document.getElementById('cover-img').src = './' + encodeURI(COVER_FILE);
+
+        /* Efeito 3D do cartucho */
+        const card = document.getElementById('game-card');
+        const cartridge = document.getElementById('cartridge3d');
+
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            const rotateX = (-y / 14).toFixed(2);
+            const rotateY = (x / 14).toFixed(2);
+
+            cartridge.style.transform =
+                `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            cartridge.style.transform =
+                `rotateX(0deg) rotateY(0deg) scale(1)`;
+
+            cartridge.style.transition = 'transform 0.5s ease';
+        });
+
+        card.addEventListener('mouseenter', () => {
+            cartridge.style.transition = 'none';
+        });
+
+        /* Configuração dos ficheiros do repositório */
+        const ROM_FILE = 'Sonic 3 Complete.md';
+
+        const CDN_BASES = [
+            'https://cdn.emulatorjs.org/stable/data/',
+            'https://cdn.emulatorjs.org/latest/data/'
+        ];
+
+        function launchEmulator(coreName = 'genesis_plus_gx', cdnIndex = 0) {
+            document.getElementById('header-bar').style.display = 'none';
+            document.getElementById('game-card').style.display = 'none';
+
+            const container = document.getElementById('game-container');
+            const gameDiv = document.getElementById('game');
+            container.style.display = 'block';
+            gameDiv.innerHTML = '';
+
+            // Limpa variáveis antigas e loader anterior
+            const oldLoader = document.getElementById('ejs-loader-script');
+            if (oldLoader) oldLoader.remove();
+
+            Object.keys(window).forEach((key) => {
+                if (key.startsWith('EJS_')) {
+                    delete window[key];
+                }
+            });
+
+            window.EJS_player = '#game';
+            window.EJS_core = coreName;
+            window.EJS_gameName = 'Sonic 3 Complete';
+            window.EJS_color = '#0284c7';
+            window.EJS_startOnLoaded = true;
+            window.EJS_pathtodata = CDN_BASES[cdnIndex] || CDN_BASES[0];
+            window.EJS_gameUrl = encodeURI(ROM_FILE);
+
+            const script = document.createElement('script');
+            script.id = 'ejs-loader-script';
+            script.src = window.EJS_pathtodata + 'loader.js';
+            script.async = true;
+
+            script.onerror = () => {
+                if (cdnIndex + 1 < CDN_BASES.length) {
+                    launchEmulator(coreName, cdnIndex + 1);
+                }
+            };
+
+            document.body.appendChild(script);
+        }
+
+        document.getElementById('play-btn').addEventListener('click', function() {
+            launchEmulator('genesis_plus_gx', 0);
+        });
+
+        document.querySelectorAll('[data-core]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                launchEmulator(btn.getAttribute('data-core'), 0);
+            });
+        });
+
+        document.getElementById('back-btn').addEventListener('click', () => {
+            window.location.reload();
+        });
+    </script>
+
 </body>
 </html>
