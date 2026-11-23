@@ -69,8 +69,8 @@
         .box-3d-wrap {
             --shine: 50%;
             position: relative;
-            width: 200px;
-            height: 292px;
+            width: 205px;
+            height: 298px;
             transform-style: preserve-3d;
             will-change: transform;
         }
@@ -81,7 +81,7 @@
             height: 100%;
             object-fit: contain;
             -webkit-user-drag: none;
-            filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
+            filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.8));
         }
 
         .box-3d-glare {
@@ -90,27 +90,19 @@
             pointer-events: none;
             background: linear-gradient(
                 115deg,
-                transparent calc(var(--shine) - 22%),
-                rgba(255, 255, 255, 0.24) var(--shine),
-                transparent calc(var(--shine) + 22%)
+                transparent calc(var(--shine) - 18%),
+                rgba(255, 255, 255, 0.22) var(--shine),
+                transparent calc(var(--shine) + 18%)
             );
-            mix-blend-mode: screen;
-            -webkit-mask-image: url("sonic3.jpeg");
-            mask-image: url("sonic3.jpeg");
-            -webkit-mask-size: contain;
-            mask-size: contain;
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-position: center;
-            mask-position: center;
+            mix-blend-mode: soft-light;
         }
 
         .floor-shadow {
-            width: 150px;
+            width: 155px;
             height: 18px;
             margin-top: 14px;
             border-radius: 50%;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 72%);
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, transparent 72%);
             pointer-events: none;
         }
 
@@ -206,7 +198,7 @@
             <div class="box-3d-wrap" id="box-3d">
                 <img
                     id="cover-img"
-                    src="sonic3.jpeg"
+                    src="sonic3_2.jpeg"
                     alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
                     class="box-3d-img"
                 >
@@ -252,7 +244,7 @@
         /* ================== FALLBACK DA CAPA ================== */
         (function () {
             var img = document.getElementById('cover-img');
-            var fallbacks = ['sonic3.png', 'sonic3.webp', 'sonic3.jpg', 'sonic3.jpeg.jpg'];
+            var fallbacks = ['sonic3.jpeg', 'sonic3.png', 'sonic3.webp', 'sonic3.jpg'];
             var idx = 0;
             img.addEventListener('error', function () {
                 if (idx < fallbacks.length) {
