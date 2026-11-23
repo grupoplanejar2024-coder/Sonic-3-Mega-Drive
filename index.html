@@ -117,7 +117,7 @@
             text-shadow: 0 1px 0 rgba(255,255,255,0.22), 0 -1px 0 rgba(0,0,0,0.7);
         }
 
-        /* Label com a capa 3D do jogo */
+        /* Label com a capa do jogo (proporção da capa: 225x314) */
         .label {
             --shine: 50%;
             position: absolute;
@@ -293,7 +293,7 @@
                     <div class="grip r"></div>
                     <div class="sega-mark">SEGA</div>
                     <div class="label" id="label">
-                        <img src="image_091ea4.jpg" alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis">
+                        <img src="Sonic-the-Hedgehog-3.jpg" alt="Capa Sonic the Hedgehog 3 - Mega Drive">
                     </div>
                     <div class="lip"></div>
                 </div>
@@ -548,3 +548,11 @@
             script.onerror = function () {
                 showError('Não foi possível carregar o EmulatorJS (cdn.emulatorjs.org). Verifique sua internet ou se algum bloqueador está impedindo.');
             };
+            document.body.appendChild(script);
+        }
+
+        document.getElementById('play-btn').addEventListener('click', startEmulator);
+        document.getElementById('btn-back').addEventListener('click', function () { location.reload(); });
+    </script>
+</body>
+</html>
