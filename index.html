@@ -1,192 +1,557 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sonic the Hedgehog 3 (USA) — KUBO TOUCH</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonic the Hedgehog 3 - Kubo Touch</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        body { overflow-x: hidden; overflow-y: auto; }
+        body.playing { overflow: hidden; }
 
-    :root {
-      --bg-dark: #090d16;
-      --bg-card: #111827;
-      --accent: #00a8ff;
-      --accent-2: #ffdd00;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --border: rgba(255, 255, 255, 0.1);
-    }
+        header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: #1e1e1e;
+            z-index: 5;
+        }
+        .badge {
+            background: #333333;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #555;
+        }
 
-    body {
-      background: radial-gradient(circle at top, #132238 0%, var(--bg-dark) 65%);
-      color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-    }
+        #game-card {
+            width: calc(100% - 40px);
+            max-width: 440px;
+            margin: 24px auto;
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
 
-    .container {
-      width: 100%;
-      max-width: 720px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+        /* ---------- CARTUCHO MEGA DRIVE 3D ---------- */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            background: radial-gradient(ellipse at 50% 85%, #1d2a44 0%, #1e1e1e 70%);
+        }
+        .scene.grabbing { cursor: grabbing; }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 16px;
-    }
+        .cart {
+            --w: 300px;
+            position: relative;
+            width: var(--w);
+            height: calc(var(--w) * 0.9);
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        .face {
+            position: absolute;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        /* Frente */
+        .front, .back { top: 0; left: 0; width: 100%; height: 100%; }
+        .front {
+            background: linear-gradient(160deg, #3b3b42 0%, #1b1b1e 45%, #0d0d0f 100%);
+            border-radius: 10px 10px 6px 6px;
+            box-shadow: inset 0 2px 3px rgba(255,255,255,0.18), inset 0 -4px 8px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+        /* Ranhuras laterais de pegada */
+        .grip {
+            position: absolute;
+            top: 7%;
+            bottom: 24%;
+            width: 15%;
+            background: repeating-linear-gradient(
+                180deg,
+                rgba(0,0,0,0.6) 0 3px,
+                rgba(255,255,255,0.10) 3px 5px,
+                transparent 5px 12px
+            );
+        }
+        .grip.l { left: 3%; }
+        .grip.r { right: 3%; }
 
-    .cover-thumb {
-      width: 48px;
-      height: 64px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: #000;
-    }
+        .sega-mark {
+            position: absolute;
+            top: 2.2%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: Arial Black, Arial, sans-serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 15px;
+            letter-spacing: 5px;
+            color: #2b2b31;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.22), 0 -1px 0 rgba(0,0,0,0.7);
+        }
 
-    .title-group h1 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
+        /* Label com a capa do jogo (proporção da capa: 225x314) */
+        .label {
+            --shine: 50%;
+            position: absolute;
+            left: 25.65%;
+            top: 8.6%;
+            width: 48.7%;
+            height: 75.4%;
+            background: #0a1a3a;
+            border: 3px solid #050506;
+            border-radius: 2px;
+            box-shadow: 0 0 0 2px #2c2c32, 0 4px 8px rgba(0,0,0,0.7), inset 0 0 10px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .label img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+        .label::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                105deg,
+                transparent calc(var(--shine) - 18%),
+                rgba(255,255,255,0.30) var(--shine),
+                transparent calc(var(--shine) + 18%)
+            );
+            pointer-events: none;
+        }
 
-    .title-group p {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+        /* Base do cartucho (área do conector) */
+        .lip {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 9%;
+            background: linear-gradient(#0b0b0c, #040405);
+            border-top: 1px solid #2d2d33;
+        }
 
-    .badge {
-      background: rgba(0, 168, 255, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(0, 168, 255, 0.35);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
+        /* Verso */
+        .back {
+            background: linear-gradient(200deg, #2a2a30 0%, #121214 100%);
+            border-radius: 10px 10px 6px 6px;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+        .back .sticker {
+            position: absolute;
+            left: 20%;
+            top: 30%;
+            width: 60%;
+            height: 38%;
+            background: #d9d8d2;
+            color: #1b1b1b;
+            font-size: 9px;
+            font-weight: bold;
+            line-height: 1.7;
+            text-align: center;
+            padding-top: 6%;
+            box-shadow: inset 0 0 0 2px #aaa8a0;
+        }
+        .back .sticker b { display: block; font-size: 11px; }
 
-    .emulator-box {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      background: #000;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-    }
+        /* Laterais, topo e base (posições definidas em JS) */
+        .side { top: 0; height: 100%; background: linear-gradient(90deg, #0f0f11, #2b2b31 50%, #0f0f11); }
+        .top, .bottom { left: 0; width: 100%; }
+        .top { background: linear-gradient(180deg, #2f2f35, #1a1a1d); }
+        .bottom { background: #121214; }
+        .bottom .pins {
+            position: absolute;
+            left: 14%; right: 14%; top: 22%; bottom: 22%;
+            background: repeating-linear-gradient(90deg, #cfa92a 0 5px, #4d3d0d 5px 7px);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.7);
+        }
 
-    #game {
-      width: 100%;
-      height: 100%;
-    }
+        .floor-shadow {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            width: 66%;
+            height: 22px;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hint { text-align: center; font-size: 12px; color: #888; padding: 6px 0 0; }
 
-    .controls-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+        /* ---------- CONTEÚDO ---------- */
+        .content { padding: 20px; }
+        h1 { margin: 0 0 10px 0; font-size: 24px; color: #e5e5e5; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .meta-info { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; font-size: 13px; color: #aaa; }
+        .description { font-size: 14px; line-height: 1.5; color: #ddd; margin-bottom: 15px; }
+        .details { font-size: 13px; color: #bbb; margin-bottom: 20px; }
+        .details ul { padding-left: 20px; margin: 0; }
+        .details li { margin-bottom: 4px; }
 
-    .controls-card h2 {
-      font-size: 0.9rem;
-      color: var(--accent-2);
-    }
+        .btn-play {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: #14305f;
+            color: #fff;
+            border: 1px solid #2a5db0;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+            outline: none;
+            position: relative;
+            z-index: 10;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-play:hover { background: #1b407f; transform: translateY(-2px); }
+        .btn-play:active { background: #0f2547; transform: translateY(0); }
+        .btn-play:focus-visible { outline: 2px solid #f1c40f; outline-offset: 2px; }
+        .btn-play:disabled { opacity: .6; cursor: wait; transform: none; }
 
-    .controls-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
+        /* ---------- JOGO em tela cheia ---------- */
+        #game-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            z-index: 99999;
+            background: #000;
+        }
+        #game-container.active { display: block; }
+        #game { width: 100%; height: 100%; }
 
-    .controls-grid span strong {
-      color: var(--text-main);
-    }
+        #btn-back {
+            display: none;
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            z-index: 100000;
+            padding: 8px 12px;
+            background: rgba(0,0,0,.6);
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        body.playing #btn-back { display: block; }
 
-    .tip {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
-    }
-  </style>
+        #error-box { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100001; background: #121212; padding: 24px; overflow-y: auto; line-height: 1.6; font-size: 14px; }
+        #error-box.active { display: block; }
+        #error-box b.err { color: #e74c3c; }
+        #error-box code { display: block; background: #1e1e1e; padding: 8px; border-radius: 4px; margin: 4px 0; word-break: break-all; font-size: 12px; color: #ccc; }
+        #error-box button { margin-top: 16px; padding: 10px 18px; background: #555; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
+
+        @media (max-width: 400px) {
+            .cart { --w: 250px; }
+            .scene { height: 300px; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <img
-          src="Sonic-the-Hedgehog-3_3.jpg"
-          alt="Capa de Sonic the Hedgehog 3 (USA)"
-          class="cover-thumb"
-        />
-        <div class="title-group">
-          <h1>Sonic the Hedgehog 3 (USA)</h1>
-          <p>Sega Genesis / Mega Drive • KUBO TOUCH</p>
-        </div>
-      </div>
-      <span class="badge">NFC READY</span>
+
+    <header id="header-bar">
+        <span class="badge">KUBO TOUCH</span>
     </header>
 
-    <main class="emulator-box">
-      <div id="game"></div>
-    </main>
+    <div id="game-card">
+        <!-- Cartucho Mega Drive / Genesis em 3D -->
+        <div class="scene" id="scene">
+            <div class="cart" id="cart">
+                <div class="face front" id="f-front">
+                    <div class="grip l"></div>
+                    <div class="grip r"></div>
+                    <div class="sega-mark">SEGA</div>
+                    <div class="label" id="label">
+                        <img src="Sonic-the-Hedgehog-3.jpg" alt="Capa Sonic the Hedgehog 3 - Mega Drive">
+                    </div>
+                    <div class="lip"></div>
+                </div>
+                <div class="face back" id="f-back">
+                    <div class="grip l"></div>
+                    <div class="grip r"></div>
+                    <div class="sticker"><b>SONIC THE HEDGEHOG 3</b>SEGA MEGA DRIVE / GENESIS<br>MK-1079<br>MADE IN JAPAN</div>
+                </div>
+                <div class="face side" id="f-left"></div>
+                <div class="face side" id="f-right"></div>
+                <div class="face top" id="f-top"></div>
+                <div class="face bottom" id="f-bottom"><div class="pins"></div></div>
+            </div>
+            <div class="floor-shadow"></div>
+        </div>
+        <div class="hint">Arraste para girar o cartucho</div>
 
-    <section class="controls-card">
-      <h2>Controles</h2>
-      <div class="controls-grid">
-        <span><strong>Direcional:</strong> Setas</span>
-        <span><strong>A / B / C:</strong> Z / X / C</span>
-        <span><strong>Start:</strong> Enter</span>
-        <span><strong>Select / Mode:</strong> Shift</span>
-      </div>
-      <p class="tip">
-        No celular, utilize o controle virtual na tela. Ajuste o caminho da ROM em <code>EJS_gameUrl</code> para o arquivo <code>.md</code> ou <code>.bin</code> hospedado no seu repositório.
-      </p>
-    </section>
-  </div>
+        <div class="content">
+            <h1>Sonic the Hedgehog 3</h1>
 
-  <script>
-    window.EJS_player = "#game";
-    window.EJS_core = "segaMD";
-    window.EJS_gameName = "Sonic the Hedgehog 3 (USA)";
-    window.EJS_gameUrl = "./Sonic The Hedgehog 3 (USA).md";
-    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-    window.EJS_startOnLoaded = true;
-    window.EJS_language = "pt-BR";
-    window.EJS_backgroundImage = "./Sonic-the-Hedgehog-3_3.jpg";
-    window.EJS_backgroundBlur = true;
-    window.EJS_volume = 0.7;
-  </script>
-  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+            <div class="meta-info">
+                <span>🎮 1-2 Jogadores</span>
+                <span>📅 1994</span>
+                <span>🕹️ SEGA (Mega Drive)</span>
+            </div>
+
+            <p class="description">
+                Sonic e Tails seguem para a Ilha dos Anjos para impedir que o Dr. Robotnik repare a Death Egg com o poder das Esmeraldas do Caos. No caminho, o astuto Knuckles aparece para atrapalhar a dupla neste clássico da era 16-bit.
+            </p>
+
+            <div class="details">
+                <ul>
+                    <li><strong>🕹️ Gênero:</strong> Plataforma / Ação</li>
+                    <li><strong>💾 Plataforma:</strong> Mega Drive / Genesis</li>
+                </ul>
+            </div>
+
+            <button id="play-btn" class="btn-play">JOGAR AGORA</button>
+        </div>
+    </div>
+
+    <button id="btn-back">✕ Sair</button>
+
+    <div id="game-container">
+        <div id="game"></div>
+    </div>
+
+    <div id="error-box"></div>
+
+    <script>
+        /* ================== CARTUCHO 3D ================== */
+        var scene = document.getElementById('scene');
+        var cart  = document.getElementById('cart');
+        var label = document.getElementById('label');
+        var fFront  = document.getElementById('f-front');
+        var fBack   = document.getElementById('f-back');
+        var fLeft   = document.getElementById('f-left');
+        var fRight  = document.getElementById('f-right');
+        var fTop    = document.getElementById('f-top');
+        var fBottom = document.getElementById('f-bottom');
+
+        // Posiciona as 6 faces em pixels (mais seguro em navegadores de celular)
+        function layout() {
+            var W = cart.offsetWidth;
+            var H = cart.offsetHeight;
+            var d = W * 0.13;                       // espessura
+            fFront.style.transform  = 'translateZ(' + (d / 2).toFixed(2) + 'px)';
+            fBack.style.transform   = 'rotateY(180deg) translateZ(' + (d / 2).toFixed(2) + 'px)';
+
+            fLeft.style.width = d + 'px';
+            fLeft.style.left = '50%';
+            fLeft.style.marginLeft = (-d / 2) + 'px';
+            fLeft.style.transform = 'rotateY(-90deg) translateZ(' + (W / 2).toFixed(2) + 'px)';
+
+            fRight.style.width = d + 'px';
+            fRight.style.left = '50%';
+            fRight.style.marginLeft = (-d / 2) + 'px';
+            fRight.style.transform = 'rotateY(90deg) translateZ(' + (W / 2).toFixed(2) + 'px)';
+
+            fTop.style.height = d + 'px';
+            fTop.style.top = '50%';
+            fTop.style.marginTop = (-d / 2) + 'px';
+            fTop.style.transform = 'rotateX(90deg) translateZ(' + (H / 2).toFixed(2) + 'px)';
+
+            fBottom.style.height = d + 'px';
+            fBottom.style.top = '50%';
+            fBottom.style.marginTop = (-d / 2) + 'px';
+            fBottom.style.transform = 'rotateX(-90deg) translateZ(' + (H / 2).toFixed(2) + 'px)';
+        }
+        layout();
+        window.addEventListener('resize', layout);
+        window.addEventListener('orientationchange', layout);
+
+        var rx = -8, ry = -25;          // rotação atual
+        var vy = 0;                      // inércia do giro
+        var dragging = false;
+        var lastX = 0, lastY = 0;
+        var lastInteract = 0;
+        var rafId = null;
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function norm(a) { return ((a + 180) % 360 + 360) % 360 - 180; }
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+        function render() {
+            cart.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+            label.style.setProperty('--shine', (50 + norm(ry) * 1.6).toFixed(1) + '%');
+        }
+
+        function tick(t) {
+            if (!dragging) {
+                if (Math.abs(vy) > 0.05) {
+                    ry += vy;
+                    vy *= 0.94;
+                    lastInteract = t;
+                } else if (t - lastInteract > 2000) {
+                    ry = norm(ry);
+                    var targetY = reduceMotion ? -18 : Math.sin(t / 1800) * 28;
+                    var targetX = reduceMotion ? -6  : -6 + Math.sin(t / 2600) * 4;
+                    ry += (targetY - ry) * 0.04;
+                    rx += (targetX - rx) * 0.04;
+                }
+            }
+            render();
+            rafId = requestAnimationFrame(tick);
+        }
+
+        scene.addEventListener('pointerdown', function (e) {
+            dragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            vy = 0;
+            scene.classList.add('grabbing');
+            try { scene.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        scene.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dx = e.clientX - lastX;
+            var dy = e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            ry += dx * 0.6;
+            vy = dx * 0.6;
+            rx = clamp(rx - dy * 0.4, -50, 50);
+            lastInteract = performance.now();
+        });
+        function endDrag() {
+            dragging = false;
+            scene.classList.remove('grabbing');
+            lastInteract = performance.now();
+        }
+        scene.addEventListener('pointerup', endDrag);
+        scene.addEventListener('pointercancel', endDrag);
+        scene.addEventListener('pointerleave', function () { if (dragging) endDrag(); });
+
+        render();
+        rafId = requestAnimationFrame(tick);
+
+        /* ================== EMULADOR ================== */
+        // A ROM é procurada nesta ordem; usa a primeira que responder corretamente.
+        var ROM_CANDIDATES = [
+            'Sonic-The-Hedgehog-3.md',
+            'Sonic-the-Hedgehog-3.md',
+            'sonic-the-hedgehog-3.md',
+            'sonic3.md',
+            'Sonic-The-Hedgehog-3.gen',
+            'Sonic-The-Hedgehog-3.bin'
+        ];
+        var started = false;
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"]/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+            });
+        }
+
+        function showError(msg, details) {
+            var html = '<b class="err">Erro ao iniciar o jogo</b><br><br>' + msg;
+            if (details && details.length) {
+                html += '<br><br><b>Resultado dos testes:</b>';
+                details.forEach(function (d) { html += '<code>' + escapeHtml(d) + '</code>'; });
+            }
+            html += '<button onclick="location.reload()">Voltar ao menu</button>';
+            var box = document.getElementById('error-box');
+            box.innerHTML = html;
+            box.classList.add('active');
+            document.getElementById('game-container').classList.remove('active');
+            document.body.classList.remove('playing');
+            started = false;
+            document.getElementById('play-btn').disabled = false;
+        }
+
+        async function findRom() {
+            var log = [];
+            for (var i = 0; i < ROM_CANDIDATES.length; i++) {
+                var url = new URL(ROM_CANDIDATES[i], window.location.href).href;
+                try {
+                    var r = await fetch(url, { method: 'HEAD' });
+                    if (!r.ok) { log.push('HTTP ' + r.status + ' → ' + url); continue; }
+                    var type = (r.headers.get('content-type') || '').toLowerCase();
+                    var size = parseInt(r.headers.get('content-length') || '0', 10);
+                    if (type.indexOf('text/html') !== -1) { log.push('Retornou uma página HTML (não é a ROM) → ' + url); continue; }
+                    if (size && size < 500000) { log.push('Arquivo muito pequeno (' + size + ' bytes; a ROM tem ~2 MB) → ' + url); continue; }
+                    return { url: url, log: log };
+                } catch (e) {
+                    log.push('Falha de rede/CORS → ' + url);
+                }
+            }
+            return { url: null, log: log };
+        }
+
+        async function startEmulator() {
+            if (started) return;
+            started = true;
+            var btn = document.getElementById('play-btn');
+            btn.disabled = true;
+            btn.textContent = 'CARREGANDO...';
+
+            var found = await findRom();
+            btn.textContent = 'JOGAR AGORA';
+
+            if (!found.url) {
+                showError(
+                    'Não consegui baixar a ROM. Confira se o arquivo <b>Sonic-The-Hedgehog-3.md</b> (com T e H maiúsculos) ' +
+                    'está na mesma pasta do index.html, se tem cerca de <b>2 MB</b> no GitHub ' +
+                    'e se o repositório está <b>público</b>. Abra pelo link do GitHub Pages, não pelo arquivo local.',
+                    found.log
+                );
+                return;
+            }
+
+            // Para a animação do cartucho para poupar processamento
+            if (rafId) cancelAnimationFrame(rafId);
+
+            document.getElementById('header-bar').style.display = 'none';
+            document.getElementById('game-card').style.display = 'none';
+            document.getElementById('game-container').classList.add('active');
+            document.body.classList.add('playing');
+
+            window.EJS_player = '#game';
+            window.EJS_core = 'segaMD';
+            window.EJS_gameName = 'Sonic the Hedgehog 3';
+            window.EJS_color = '#0057b8';
+            window.EJS_language = 'pt-BR';
+            window.EJS_startOnLoaded = true;
+            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+            window.EJS_gameUrl = found.url;
+
+            var script = document.createElement('script');
+            script.src = window.EJS_pathtodata + 'loader.js';
+            script.onerror = function () {
+                showError('Não foi possível carregar o EmulatorJS (cdn.emulatorjs.org). Verifique sua internet ou se algum bloqueador está impedindo.');
+            };
+            document.body.appendChild(script);
+        }
+
+        document.getElementById('play-btn').addEventListener('click', startEmulator);
+        document.getElementById('btn-back').addEventListener('click', function () { location.reload(); });
+    </script>
 </body>
 </html>
