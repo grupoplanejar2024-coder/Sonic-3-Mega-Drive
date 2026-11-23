@@ -202,7 +202,8 @@
         <div class="scene-3d" id="scene-3d">
             <div class="box-3d-wrap" id="box-3d">
                 <img
-                    src="sonic3.jpeg.jpg"
+                    id="cover-img"
+                    src="sonic3.jpeg"
                     alt="Capa 3D Sonic the Hedgehog 3 - Sega Genesis"
                     class="box-3d-img"
                 >
@@ -245,6 +246,18 @@
     <div id="error-box"></div>
 
     <script>
+        /* ================== FALLBACK DA CAPA ================== */
+        (function () {
+            var img = document.getElementById('cover-img');
+            var fallbacks = ['sonic3.jpeg.jpg', 'sonic3.jpg', 'sonic3.png', 'sonic3.webp'];
+            var idx = 0;
+            img.addEventListener('error', function () {
+                if (idx < fallbacks.length) {
+                    img.src = fallbacks[idx++];
+                }
+            });
+        })();
+
         /* ================== CAPA 3D INTERATIVA ================== */
         var scene3d = document.getElementById('scene-3d');
         var box3d = document.getElementById('box-3d');
